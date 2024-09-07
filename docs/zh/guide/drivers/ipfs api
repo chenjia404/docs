@@ -1,0 +1,77 @@
+---
+# This is the icon of the page
+icon: iconfont icon-state
+# This control sidebar order
+order: 40
+# A page can have multiple categories
+category:
+  - Guide
+# A page can have multiple tags
+tag:
+  - Storage
+  - Guide
+  - "302"
+# this page is sticky in article list
+sticky: true
+# this page will appear in starred articles
+star: true
+---
+
+# ipfs api
+
+## 安装 api
+### ipfs-desktop
+链接：https://docs.ipfs.tech/install/ipfs-desktop/ 
+
+根据自己的操作系统选择下载的版本，一路安装后启动。
+
+在打开的 webui 界面里面，进入文件，选择导入->新建文件夹 输入 alist ，这个alist你可以自定义名字。
+
+### docker-compose
+
+docker-compose.yam
+```
+version: '3.8'
+services:
+  ipfs:
+    image: ipfs/kubo
+    restart: unless-stopped
+    volumes:
+      - ./ipfs:/data/ipfs
+    environment:
+      - IPFS_PATH=/data/ipfs
+    ports:
+      # p2p 通信端口
+      - 4001:4001/tcp
+      - 4001:4001/udp
+      
+      # API 端口
+      - 127.0.0.1:5001:5001
+      
+      # HTTP 网关端口
+      - 127.0.0.1:8080:8080
+
+```
+
+数据保存在当前的 ipfs 目录，p2p通信使用 4001 端口，api 端口是 5001，http网关端口是 8080。要确保API 端口和alist之间可以相互访问。
+
+启动
+```
+docker-compose up -d
+```
+
+更多ipfs运行的方法请自行Google。
+
+## 添加IPFS API驱动
+
+进入Alist后台 存储->驱动，点击添加按钮，在下拉列表选择 IPFS API。
+
+挂载路径：输入 /alist ，注意需要使用 / 开头。 ipfs webui文件里面的路径，一般单独新建一个，例如 alist。
+
+根文件夹路径： /
+
+Endpoint:http://127.0.0.1:5001  填写 ipfs API 的ip和端口，如果是局域网或者公网，需要看情况自定义。
+
+网关:  如果你只是本地使用，可以填写 http://127.0.0.1:8080 ，或者使用如 https://cdn.ipfsscan.io 这样的公共网关。
+
+点击添加即可。
